@@ -60,11 +60,112 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+//import * as renderer from './renderer';
+var _1 = __webpack_require__(1);
+var renderer = new _1.default();
+renderer.init();
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var renderer_1 = __webpack_require__(2);
+exports.default = renderer_1.default;
+
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var THREE = __webpack_require__(3);
+var input_1 = __webpack_require__(4);
+var OBJLoader = __webpack_require__(5);
+OBJLoader(THREE);
+var Renderer = (function () {
+    function Renderer() {
+        this.textures = { sprites: null, walls: null };
+        this.group = null;
+        this.test = {};
+    }
+    Renderer.prototype.initRenderer = function () {
+        this.renderer = new THREE.WebGLRenderer();
+        this.renderer.autoClear = false;
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(this.renderer.domElement);
+    };
+    Renderer.prototype.initTextures = function () {
+        var _this = this;
+        var loader = new THREE.TextureLoader();
+        var objloader = new THREE.OBJLoader();
+        objloader.load("dist/objs/lpv6.obj", function (obj) {
+            _this.group = obj;
+            var mat = new THREE.MeshNormalMaterial();
+            for (var _i = 0, _a = _this.group.children; _i < _a.length; _i++) {
+                var mesh = _a[_i];
+                mesh.material = mat;
+            }
+            _this.gridScene.add(_this.group);
+            _this.initRenderer();
+            _this.animate();
+        });
+    };
+    Renderer.prototype.syncScene = function () {
+    };
+    Renderer.prototype.resize = function () {
+        if (this.width != window.innerWidth || this.height != window.innerHeight) {
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
+            this.camera.translateZ(-1);
+            this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+            this.width = window.innerWidth;
+            this.height = window.innerHeight;
+        }
+    };
+    Renderer.prototype.animate = function () {
+        var _this = this;
+        this.resize();
+        this.input.handle();
+        this.syncScene();
+        var time = new Date().getTime();
+        this.renderer.autoClear = false;
+        this.renderer.clear();
+        this.renderer.render(this.gridScene, this.camera);
+        this.renderer.render(this.entitiesScene, this.camera);
+        requestAnimationFrame(function () { return _this.animate(); });
+        var elapsed = (new Date().getTime()) - time;
+        var s = 0.01;
+        this.group.rotateY(s);
+    };
+    Renderer.prototype.init = function () {
+        this.input = new input_1.default();
+        this.gridScene = new THREE.Scene();
+        this.entitiesScene = new THREE.Scene();
+        this.initTextures();
+    };
+    return Renderer;
+}());
+exports.default = Renderer;
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44170,117 +44271,6 @@ function CanvasRenderer() {
 }
 
 
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-//import * as renderer from './renderer';
-var _1 = __webpack_require__(2);
-var renderer = new _1.default();
-renderer.init();
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var renderer_1 = __webpack_require__(3);
-exports.default = renderer_1.default;
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var THREE = __webpack_require__(0);
-var input_1 = __webpack_require__(4);
-var OBJLoader = __webpack_require__(5);
-OBJLoader(THREE);
-var Renderer = (function () {
-    function Renderer() {
-        this.textures = { sprites: null, walls: null };
-        this.group = null;
-        this.test = {};
-    }
-    Renderer.prototype.initRenderer = function () {
-        this.renderer = new THREE.WebGLRenderer();
-        this.renderer.autoClear = false;
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(this.renderer.domElement);
-    };
-    Renderer.prototype.initTextures = function () {
-        var _this = this;
-        var loader = new THREE.TextureLoader();
-        var objloader = new THREE.OBJLoader();
-        loader.load("dist/textures/sprites.png", function (tex1) {
-            tex1.magFilter = THREE.NearestFilter;
-            tex1.minFilter = THREE.NearestFilter;
-            loader.load('dist/textures/walls.png', function (tex2) {
-                tex2.magFilter = THREE.NearestFilter;
-                tex2.minFilter = THREE.NearestFilter;
-                _this.textures.sprites = tex1;
-                _this.textures.walls = tex2;
-                objloader.load("dist/objs/lpv6.obj", function (obj) {
-                    _this.group = obj;
-                    var mat = new THREE.MeshNormalMaterial();
-                    for (var _i = 0, _a = _this.group.children; _i < _a.length; _i++) {
-                        var mesh = _a[_i];
-                        mesh.material = mat;
-                    }
-                    _this.gridScene.add(_this.group);
-                    _this.initRenderer();
-                    _this.animate();
-                });
-            });
-        });
-    };
-    Renderer.prototype.syncScene = function () {
-    };
-    Renderer.prototype.resize = function () {
-        if (this.width != window.innerWidth || this.height != window.innerHeight) {
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-            this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
-            this.camera.translateZ(-0);
-            this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-            this.width = window.innerWidth;
-            this.height = window.innerHeight;
-        }
-    };
-    Renderer.prototype.animate = function () {
-        var _this = this;
-        this.resize();
-        this.input.handle();
-        this.syncScene();
-        var time = new Date().getTime();
-        this.renderer.autoClear = false;
-        this.renderer.clear();
-        this.renderer.render(this.gridScene, this.camera);
-        this.renderer.render(this.entitiesScene, this.camera);
-        requestAnimationFrame(function () { return _this.animate(); });
-        var elapsed = (new Date().getTime()) - time;
-        var s = 0.01;
-        this.group.rotateY(s * 2);
-    };
-    Renderer.prototype.init = function () {
-        this.input = new input_1.default();
-        this.gridScene = new THREE.Scene();
-        this.entitiesScene = new THREE.Scene();
-        this.initTextures();
-    };
-    return Renderer;
-}());
-exports.default = Renderer;
 
 
 /***/ }),
