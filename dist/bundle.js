@@ -114,7 +114,7 @@ var Renderer = (function () {
         var _this = this;
         var loader = new THREE.TextureLoader();
         var objloader = new THREE.OBJLoader();
-        objloader.load("dist/objs/lpv6.obj", function (obj) {
+        objloader.load("dist/objs/lpv.obj", function (obj) {
             _this.group = obj;
             var mat = new THREE.MeshNormalMaterial();
             for (var _i = 0, _a = _this.group.children; _i < _a.length; _i++) {
@@ -132,7 +132,7 @@ var Renderer = (function () {
         if (this.width != window.innerWidth || this.height != window.innerHeight) {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
             this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
-            this.camera.translateZ(-1);
+            this.camera.translateZ(0);
             this.camera.lookAt(new THREE.Vector3(0, 0, 0));
             this.width = window.innerWidth;
             this.height = window.innerHeight;

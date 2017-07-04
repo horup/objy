@@ -34,7 +34,7 @@ export default class Renderer
         let loader = new THREE.TextureLoader();
         let objloader = new THREE.OBJLoader();
       
-        objloader.load("dist/objs/lpv6.obj", (obj:THREE.Group)=>
+        objloader.load("dist/objs/lpv.obj", (obj:THREE.Group)=>
         {
             this.group = obj;
             let mat = new THREE.MeshNormalMaterial();
@@ -63,7 +63,7 @@ export default class Renderer
         {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
             this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
-            this.camera.translateZ(-1);
+            this.camera.translateZ(0);
             this.camera.lookAt(new THREE.Vector3(0, 0, 0));
             this.width = window.innerWidth;
             this.height = window.innerHeight;
