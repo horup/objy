@@ -3,10 +3,15 @@
     "noImplicitAny": false,
     "module": "commonjs",
     "noEmitOnError": true,
+    "noImplicitThis": true,
     "removeComments": false,
     "sourceMap": true,
+    "jsx": "react",
     "target": "es5",
-    "lib": [ "es2015", "dom" ],
+    "lib": [
+      "es2015",
+      "dom"
+    ],
     "outDir": "./out"
   },
   "exclude": [
