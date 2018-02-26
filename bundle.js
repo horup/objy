@@ -113,7 +113,7 @@ var Renderer = (function () {
         var _this = this;
         var loader = new THREE.TextureLoader();
         var objloader = new THREE.OBJLoader();
-        objloader.load("dist/objs/lpv.obj", function (obj) {
+        objloader.load("old hand drill.obj", function (obj) {
             _this.group = obj;
             var mat = new THREE.MeshNormalMaterial();
             for (var _i = 0, _a = _this.group.children; _i < _a.length; _i++) {
@@ -129,16 +129,18 @@ var Renderer = (function () {
     };
     Renderer.prototype.resize = function () {
         if (this.width != window.innerWidth || this.height != window.innerHeight) {
+            this.renderer.setPixelRatio(window.devicePixelRatio);
             this.renderer.setSize(window.innerWidth, window.innerHeight);
             this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
-            this.camera.translateZ(0);
-            this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-            this.width = window.innerWidth;
-            this.height = window.innerHeight;
+            this.camera.translateZ(-450);
+            var y = 100;
+            this.camera.translateY(y);
+            this.camera.lookAt(new THREE.Vector3(0, y, 0));
         }
     };
     Renderer.prototype.animate = function () {
         var _this = this;
+        requestAnimationFrame(function () { return _this.animate(); });
         this.resize();
         this.input.handle();
         this.syncScene();
@@ -146,8 +148,6 @@ var Renderer = (function () {
         this.renderer.autoClear = false;
         this.renderer.clear();
         this.renderer.render(this.gridScene, this.camera);
-        this.renderer.render(this.entitiesScene, this.camera);
-        requestAnimationFrame(function () { return _this.animate(); });
         var elapsed = (new Date().getTime()) - time;
         var s = 0.01;
         this.group.rotateY(s);

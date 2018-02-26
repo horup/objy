@@ -34,7 +34,7 @@ export default class Renderer
         let loader = new THREE.TextureLoader();
         let objloader = new THREE.OBJLoader();
       
-        objloader.load("dist/objs/lpv.obj", (obj:THREE.Group)=>
+        objloader.load("old hand drill.obj", (obj:THREE.Group)=>
         {
             this.group = obj;
             let mat = new THREE.MeshNormalMaterial();
@@ -61,17 +61,19 @@ export default class Renderer
     {
         if (this.width != window.innerWidth || this.height != window.innerHeight)
         {
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.renderer.setPixelRatio(window.devicePixelRatio);
+            this.renderer.setSize(window.innerWidth, window.innerHeight );
             this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
-            this.camera.translateZ(0);
-            this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-            this.width = window.innerWidth;
-            this.height = window.innerHeight;
+            this.camera.translateZ(-450);
+            let y = 100;
+            this.camera.translateY(y);
+            this.camera.lookAt(new THREE.Vector3(0, y, 0));
         }
     }
 
     private animate()
     {
+        requestAnimationFrame(()=>this.animate());
         this.resize();
         this.input.handle();
 
@@ -80,8 +82,6 @@ export default class Renderer
         this.renderer.autoClear = false;
         this.renderer.clear();
         this.renderer.render(this.gridScene, this.camera);
-        this.renderer.render(this.entitiesScene, this.camera);
-        requestAnimationFrame(()=>this.animate());
         let elapsed = (new Date().getTime()) - time;
         let s = 0.01;
         this.group.rotateY(s);
