@@ -1,6 +1,7 @@
 declare var require:any;
 import * as THREE from 'three';
 import Input from './input';
+import { Geometry } from 'three';
 let OBJLoader = require('three-obj-loader');
 OBJLoader(THREE);
 
@@ -40,6 +41,11 @@ export default class Renderer
             let mat = new THREE.MeshNormalMaterial();
             for (let mesh of this.group.children)
             {
+            /*    (mesh as THREE.Mesh).geometry.computeBoundingSphere();
+                let r = (mesh as THREE.Mesh).geometry.boundingSphere.radius;
+                console.log(r);
+                let s = 1/r;
+                (mesh as THREE.Mesh).scale.set(s, s, s);*/
                 (mesh as THREE.Mesh).material = mat;
             }
 
@@ -61,13 +67,12 @@ export default class Renderer
     {
         if (this.width != window.innerWidth || this.height != window.innerHeight)
         {
+            var sphere = new THREE.Box3().setFromObject(this.group).getBoundingSphere();
             this.renderer.setPixelRatio(window.devicePixelRatio);
             this.renderer.setSize(window.innerWidth, window.innerHeight );
             this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
-            this.camera.translateZ(-450);
-            let y = 100;
-            this.camera.translateY(y);
-            this.camera.lookAt(new THREE.Vector3(0, y, 0));
+            this.camera.translateZ(-sphere.radius * 1.25);
+            this.camera.lookAt(new THREE.Vector3(0, 0, 0));
         }
     }
 

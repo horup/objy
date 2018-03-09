@@ -118,6 +118,11 @@ var Renderer = (function () {
             var mat = new THREE.MeshNormalMaterial();
             for (var _i = 0, _a = _this.group.children; _i < _a.length; _i++) {
                 var mesh = _a[_i];
+                /*    (mesh as THREE.Mesh).geometry.computeBoundingSphere();
+                    let r = (mesh as THREE.Mesh).geometry.boundingSphere.radius;
+                    console.log(r);
+                    let s = 1/r;
+                    (mesh as THREE.Mesh).scale.set(s, s, s);*/
                 mesh.material = mat;
             }
             _this.gridScene.add(_this.group);
@@ -129,13 +134,12 @@ var Renderer = (function () {
     };
     Renderer.prototype.resize = function () {
         if (this.width != window.innerWidth || this.height != window.innerHeight) {
+            var sphere = new THREE.Box3().setFromObject(this.group).getBoundingSphere();
             this.renderer.setPixelRatio(window.devicePixelRatio);
             this.renderer.setSize(window.innerWidth, window.innerHeight);
             this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
-            this.camera.translateZ(-450);
-            var y = 100;
-            this.camera.translateY(y);
-            this.camera.lookAt(new THREE.Vector3(0, y, 0));
+            this.camera.translateZ(-sphere.radius * 1.25);
+            this.camera.lookAt(new THREE.Vector3(0, 0, 0));
         }
     };
     Renderer.prototype.animate = function () {
