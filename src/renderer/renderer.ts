@@ -12,7 +12,7 @@ export default class Renderer
     input:Input;
     renderer:THREE.WebGLRenderer;
     camera:THREE.Camera;
-    gridScene:THREE.Scene;
+    scene:THREE.Scene;
     entitiesScene:THREE.Scene;
     textures = {sprites:null as THREE.Texture, walls:null as THREE.Texture};
     constructor()
@@ -35,22 +35,19 @@ export default class Renderer
         let loader = new THREE.TextureLoader();
         let objloader = new THREE.OBJLoader();
       
-        objloader.load("old hand drill.obj", (obj:THREE.Group)=>
+        objloader.load("Engine1.obj", (obj:THREE.Group)=>
         {
             this.group = obj;
-            let mat = new THREE.MeshNormalMaterial();
+            let mat = new THREE.MeshNormalMaterial() as THREE.Material;
+            mat.side = THREE.DoubleSide;
+            mat = new THREE.MeshStandardMaterial({color:0xa2a2a2});
             for (let mesh of this.group.children)
             {
-            /*    (mesh as THREE.Mesh).geometry.computeBoundingSphere();
-                let r = (mesh as THREE.Mesh).geometry.boundingSphere.radius;
-                console.log(r);
-                let s = 1/r;
-                (mesh as THREE.Mesh).scale.set(s, s, s);*/
                 (mesh as THREE.Mesh).material = mat;
             }
 
-            this.gridScene.add(this.group);
-
+            this.scene.add(this.group);
+            this.scene.background = new THREE.Color(0xffffff);
             this.initRenderer();
             this.animate();
         });
@@ -86,7 +83,7 @@ export default class Renderer
         let time = new Date().getTime();
         this.renderer.autoClear = false;
         this.renderer.clear();
-        this.renderer.render(this.gridScene, this.camera);
+        this.renderer.render(this.scene, this.camera);
         let elapsed = (new Date().getTime()) - time;
         let s = 0.01;
         this.group.rotateY(s);
@@ -96,8 +93,23 @@ export default class Renderer
     init()
     {
         this.input = new Input();
-        this.gridScene = new THREE.Scene();
-        this.entitiesScene = new THREE.Scene();
+        this.scene = new THREE.Scene();
+        var ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.5);
+        this.scene.add( ambientLight );
+
+        var lights = [];
+        lights[ 0 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+        lights[ 1 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+        lights[ 2 ] = new THREE.PointLight( 0xffffff, 1, 0 );
+
+        lights[ 0 ].position.set( 0, 200, 0 );
+        lights[ 1 ].position.set( 100, 200, 100 );
+        lights[ 2 ].position.set( - 100, - 200, - 100 );
+
+        this.scene.add( lights[ 0 ] );
+        this.scene.add( lights[ 1 ] );
+        this.scene.add( lights[ 2 ] );
+            
         this.initTextures();
     }
 }
