@@ -113,7 +113,7 @@ var Renderer = (function () {
         var _this = this;
         var loader = new THREE.TextureLoader();
         var objloader = new THREE.OBJLoader();
-        objloader.load("Engine1.obj", function (obj) {
+        objloader.load("meshes/engine.obj", function (obj) {
             _this.group = obj;
             var mat = new THREE.MeshNormalMaterial();
             mat.side = THREE.DoubleSide;

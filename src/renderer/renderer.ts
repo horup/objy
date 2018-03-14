@@ -35,7 +35,7 @@ export default class Renderer
         let loader = new THREE.TextureLoader();
         let objloader = new THREE.OBJLoader();
       
-        objloader.load("Engine1.obj", (obj:THREE.Group)=>
+        objloader.load("meshes/engine.obj", (obj:THREE.Group)=>
         {
             this.group = obj;
             let mat = new THREE.MeshNormalMaterial() as THREE.Material;
