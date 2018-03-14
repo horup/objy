@@ -30,12 +30,27 @@ export default class Renderer
 
     group:THREE.Group = null;
 
-    private initTextures()
+    private initMesh()
     {
+        let getParameterByName = (name, url = null) => 
+        {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+
         let loader = new THREE.TextureLoader();
         let objloader = new THREE.OBJLoader();
-      
-        objloader.load("meshes/engine.obj", (obj:THREE.Group)=>
+        let mesh = getParameterByName("mesh");
+        if (mesh == null)
+            mesh = "engine.obj";
+        
+        objloader.load("meshes/" + mesh, (obj:THREE.Group)=>
         {
             this.group = obj;
             let mat = new THREE.MeshNormalMaterial() as THREE.Material;
@@ -53,12 +68,6 @@ export default class Renderer
         });
     }
 
-    test = {};
-
-    private syncScene()
-    {
-       
-    }
 
     private resize()
     {
@@ -78,8 +87,6 @@ export default class Renderer
         requestAnimationFrame(()=>this.animate());
         this.resize();
         this.input.handle();
-
-        this.syncScene();
         let time = new Date().getTime();
         this.renderer.autoClear = false;
         this.renderer.clear();
@@ -110,6 +117,6 @@ export default class Renderer
         this.scene.add( lights[ 1 ] );
         this.scene.add( lights[ 2 ] );
             
-        this.initTextures();
+        this.initMesh();
     }
 }

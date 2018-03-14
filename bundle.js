@@ -101,7 +101,6 @@ var Renderer = (function () {
     function Renderer() {
         this.textures = { sprites: null, walls: null };
         this.group = null;
-        this.test = {};
     }
     Renderer.prototype.initRenderer = function () {
         this.renderer = new THREE.WebGLRenderer();
@@ -109,26 +108,39 @@ var Renderer = (function () {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
     };
-    Renderer.prototype.initTextures = function () {
+    Renderer.prototype.initMesh = function () {
         var _this = this;
+        var getParameterByName = function (name, url) {
+            if (url === void 0) { url = null; }
+            if (!url)
+                url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
+            if (!results)
+                return null;
+            if (!results[2])
+                return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        };
         var loader = new THREE.TextureLoader();
         var objloader = new THREE.OBJLoader();
-        objloader.load("meshes/engine.obj", function (obj) {
+        var mesh = getParameterByName("mesh");
+        if (mesh == null)
+            mesh = "engine.obj";
+        objloader.load("meshes/" + mesh, function (obj) {
             _this.group = obj;
             var mat = new THREE.MeshNormalMaterial();
             mat.side = THREE.DoubleSide;
             mat = new THREE.MeshStandardMaterial({ color: 0xa2a2a2 });
             for (var _i = 0, _a = _this.group.children; _i < _a.length; _i++) {
-                var mesh = _a[_i];
-                mesh.material = mat;
+                var mesh_1 = _a[_i];
+                mesh_1.material = mat;
             }
             _this.scene.add(_this.group);
             _this.scene.background = new THREE.Color(0xffffff);
             _this.initRenderer();
             _this.animate();
         });
-    };
-    Renderer.prototype.syncScene = function () {
     };
     Renderer.prototype.resize = function () {
         if (this.width != window.innerWidth || this.height != window.innerHeight) {
@@ -145,7 +157,6 @@ var Renderer = (function () {
         requestAnimationFrame(function () { return _this.animate(); });
         this.resize();
         this.input.handle();
-        this.syncScene();
         var time = new Date().getTime();
         this.renderer.autoClear = false;
         this.renderer.clear();
@@ -169,7 +180,7 @@ var Renderer = (function () {
         this.scene.add(lights[0]);
         this.scene.add(lights[1]);
         this.scene.add(lights[2]);
-        this.initTextures();
+        this.initMesh();
     };
     return Renderer;
 }());
