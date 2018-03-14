@@ -24,6 +24,10 @@ export default class Renderer
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.autoClear = false;
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+        let loader = document.createElement('div');
+        loader.className = "loader";
+        document.body.appendChild(loader);
         document.body.appendChild(this.renderer.domElement);
 
     }

@@ -106,6 +106,9 @@ var Renderer = (function () {
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.autoClear = false;
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        var loader = document.createElement('div');
+        loader.className = "loader";
+        document.body.appendChild(loader);
         document.body.appendChild(this.renderer.domElement);
     };
     Renderer.prototype.initMesh = function () {
