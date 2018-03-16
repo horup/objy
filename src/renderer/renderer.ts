@@ -17,6 +17,10 @@ export default class Renderer
     textures = {sprites:null as THREE.Texture, walls:null as THREE.Texture};
     constructor()
     {
+        let loader = document.createElement('div');
+        loader.className = "loader";
+        loader.id = "loader";
+        document.body.appendChild(loader);
     }
 
     private initRenderer()
@@ -24,12 +28,7 @@ export default class Renderer
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.autoClear = false;
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-        let loader = document.createElement('div');
-        loader.className = "loader";
-        document.body.appendChild(loader);
         document.body.appendChild(this.renderer.domElement);
-
     }
 
     group:THREE.Group = null;
@@ -56,6 +55,8 @@ export default class Renderer
         
         objloader.load("meshes/" + mesh, (obj:THREE.Group)=>
         {
+            let s = $(".loader");
+            s.hide();
             this.group = obj;
             let mat = new THREE.MeshNormalMaterial() as THREE.Material;
             mat.side = THREE.DoubleSide;
@@ -88,6 +89,7 @@ export default class Renderer
 
     private animate()
     {
+        
         requestAnimationFrame(()=>this.animate());
         this.resize();
         this.input.handle();
