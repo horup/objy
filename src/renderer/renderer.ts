@@ -33,23 +33,25 @@ export default class Renderer
 
     group:THREE.Group = null;
 
+    getParameterByName = (name, url = null) => 
+    {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
     private initMesh()
     {
-        let getParameterByName = (name, url = null) => 
-        {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        }
+        
 
 
         let loader = new THREE.TextureLoader();
         let objloader = new THREE.OBJLoader();
-        let mesh = getParameterByName("mesh");
+        let mesh = this.getParameterByName("mesh");
         if (mesh == null)
             mesh = "engine.obj";
         
@@ -78,12 +80,16 @@ export default class Renderer
     {
         if (this.width != window.innerWidth || this.height != window.innerHeight)
         {
+            let y = Number.parseFloat(this.getParameterByName("y"));
+            if (Number.isNaN(y))
+                y = 0;
             var sphere = new THREE.Box3().setFromObject(this.group).getBoundingSphere();
             this.renderer.setPixelRatio(window.devicePixelRatio);
             this.renderer.setSize(window.innerWidth, window.innerHeight );
             this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 10000);
             this.camera.translateZ(-sphere.radius * 1.25);
-            this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+            this.camera.translateY(y);
+            this.camera.lookAt(new THREE.Vector3(0, y, 0));
         }
     }
 
