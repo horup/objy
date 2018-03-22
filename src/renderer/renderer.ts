@@ -7,6 +7,8 @@ OBJLoader(THREE);
 
 export default class Renderer
 {
+    auto = true;
+    mousedown:boolean = false;
     width:number;
     height:number;
     input:Input;
@@ -15,12 +17,58 @@ export default class Renderer
     scene:THREE.Scene;
     entitiesScene:THREE.Scene;
     textures = {sprites:null as THREE.Texture, walls:null as THREE.Texture};
+    tx = 0;
     constructor()
     {
         let loader = document.createElement('div');
         loader.className = "loader";
         loader.id = "loader";
         document.body.appendChild(loader);
+
+        document.onmousedown = (e) =>
+        {
+            this.mousedown = true;
+            this.auto = false;
+        }
+        
+        document.ontouchstart = (e) =>
+        {
+            this.mousedown = true;
+            this.auto = false;
+            this.tx = e.touches[0].screenX;
+        }
+
+        document.onmouseup = (e) =>
+        {
+            this.mousedown = false;
+        }
+        document.ontouchend = (e) =>
+        {
+            this.mousedown = false;
+        }
+
+
+        document.onmousemove = (e) =>
+        {
+            if (this.mousedown)
+            {
+                let s = 0.005;
+                let x = e.movementX;
+                let y = e.movementY;
+                this.group.rotateY(x * s);
+            }
+        }
+
+        document.ontouchmove = (e) =>
+        {
+            if (this.mousedown)
+            {
+                let s = 0.005;
+                let x = e.touches[0].screenX - this.tx;
+                this.tx = e.touches[0].screenX;
+                this.group.rotateY(x * s);
+            }
+        }
     }
 
     private initRenderer()
@@ -46,9 +94,6 @@ export default class Renderer
 
     private initMesh()
     {
-        
-
-
         let loader = new THREE.TextureLoader();
         let objloader = new THREE.OBJLoader();
         let mesh = this.getParameterByName("mesh");
@@ -104,8 +149,11 @@ export default class Renderer
         this.renderer.clear();
         this.renderer.render(this.scene, this.camera);
         let elapsed = (new Date().getTime()) - time;
-        let s = 0.01;
-        this.group.rotateY(s);
+        if (this.auto)
+        {
+            let s = 0.01;
+            this.group.rotateY(s);
+        }
     }
 
   

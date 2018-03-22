@@ -99,7 +99,11 @@ var OBJLoader = __webpack_require__(6);
 OBJLoader(THREE);
 var Renderer = (function () {
     function Renderer() {
+        var _this = this;
+        this.auto = true;
+        this.mousedown = false;
         this.textures = { sprites: null, walls: null };
+        this.tx = 0;
         this.group = null;
         this.getParameterByName = function (name, url) {
             if (url === void 0) { url = null; }
@@ -117,6 +121,37 @@ var Renderer = (function () {
         loader.className = "loader";
         loader.id = "loader";
         document.body.appendChild(loader);
+        document.onmousedown = function (e) {
+            _this.mousedown = true;
+            _this.auto = false;
+        };
+        document.ontouchstart = function (e) {
+            _this.mousedown = true;
+            _this.auto = false;
+            _this.tx = e.touches[0].screenX;
+        };
+        document.onmouseup = function (e) {
+            _this.mousedown = false;
+        };
+        document.ontouchend = function (e) {
+            _this.mousedown = false;
+        };
+        document.onmousemove = function (e) {
+            if (_this.mousedown) {
+                var s = 0.005;
+                var x = e.movementX;
+                var y = e.movementY;
+                _this.group.rotateY(x * s);
+            }
+        };
+        document.ontouchmove = function (e) {
+            if (_this.mousedown) {
+                var s = 0.005;
+                var x = e.touches[0].screenX - _this.tx;
+                _this.tx = e.touches[0].screenX;
+                _this.group.rotateY(x * s);
+            }
+        };
     }
     Renderer.prototype.initRenderer = function () {
         this.renderer = new THREE.WebGLRenderer();
@@ -172,8 +207,10 @@ var Renderer = (function () {
         this.renderer.clear();
         this.renderer.render(this.scene, this.camera);
         var elapsed = (new Date().getTime()) - time;
-        var s = 0.01;
-        this.group.rotateY(s);
+        if (this.auto) {
+            var s = 0.01;
+            this.group.rotateY(s);
+        }
     };
     Renderer.prototype.init = function () {
         this.input = new input_1.default();
